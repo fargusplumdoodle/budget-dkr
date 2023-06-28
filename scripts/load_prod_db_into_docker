@@ -1,0 +1,34 @@
+#!/bin/bash
+
+PROD_DB_BACKUP=$1
+
+DB=$(docker compose ps -q -a \
+  | xargs docker inspect -f '{{ .Name }}' \
+  | rg db \
+  | cut -d'/' -f2
+)
+
+docker rm -f $DB
+docker compose up -d db
+
+docker cp \
+  $PROD_DB_BACKUP \
+  $DB:/tmp/backup.bak
+
+sleep 2
+
+docker exec -it \
+  $DB psql \
+  -U budget -d budget \
+  -c "CREATE ROLE budget_prod;"
+
+
+docker exec \
+  -it $DB \
+  pg_restore \
+  -U budget -d budget \
+  --schema=public \
+  -1 /tmp/backup.bak
+
+
+ 
