@@ -30,5 +30,8 @@ docker exec \
   --schema=public \
   -1 /tmp/backup.bak
 
-
+docker exec -it \
+  $DB psql \
+  -U budget -d budget \
+  -c "REASSIGN OWNED BY budget_prod TO budget; ALTER DATABASE budget OWNER TO budget;"
  

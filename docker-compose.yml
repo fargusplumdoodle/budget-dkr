@@ -1,22 +1,19 @@
-
----
 version: '3'
 services:
   db:
     extends:
       file: ../api/docker-compose.yml
       service: db
- redis:
+  redis:
     extends:
       file: ../api/docker-compose.yml
-      service: redis
+      service: redis 
   api:
     extends:
       file: ../api/docker-compose.yml
       service: api
     depends_on:
      - db
-     - redis
   web:
     extends:
       file: ../web/docker-compose.yml
